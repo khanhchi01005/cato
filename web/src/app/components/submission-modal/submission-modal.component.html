@@ -1,0 +1,29 @@
+<nz-descriptions [nzBordered]="true" nzSize="small">
+    <nz-descriptions-item nzTitle="Problem">
+        <a *ngIf="submission" href="/problem/{{ submission.problem.uUID }}" target="_blank">
+            {{ submission.problem.displayName }}
+        </a>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Author">
+        {{ submission?.author?.displayName }}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Language">
+        {{ submission?.language | language | async }}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Created time">
+        {{ submission?.createdTime| date:'d/M/yyyy, h:mm a' }}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Status">
+        <nz-tag *ngIf="submission" [nzColor]="submission | submissionStatusColor">
+            {{ submission | submissionStatus }}
+        </nz-tag>
+    </nz-descriptions-item>
+</nz-descriptions><br />
+<p *ngIf="sessionAccount && submission && sessionAccount.iD === submission.author.iD">
+    <button nz-button (click)="onCopyClicked()">
+        <span nz-icon nzType="copy" nzTheme="outline"></span> Copy
+    </button>
+</p>
+<nge-monaco-editor *ngIf="sessionAccount && submission && sessionAccount.iD === submission.author.iD"
+    (ready)="onMonacoEditorReady($event)">
+</nge-monaco-editor>

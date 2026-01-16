@@ -1,0 +1,34 @@
+<p nz-typography>
+    <nz-switch [(ngModel)]="autoReloadEnabled" (ngModelChange)="onAutoReloadEnabledChange($event)"></nz-switch>&nbsp;
+    Enable auto-reload
+</p>
+<p *ngIf="lastLoadedTime !== undefined" nz-typography>
+    Last updated at {{ lastLoadedTime | date:'d/M/yyyy, h:mm a':'long' }}
+</p>
+<nz-table #table [nzData]="submissionSnippetList" [nzPageIndex]="pageIndex" [nzPageSize]="pageSize"
+    [nzTotal]="totalSubmissionCount" [nzLoading]="loading" [nzShowSizeChanger]="true" [nzFrontPagination]="false"
+    [nzPageSizeOptions]="[10, 20, 50, 100]" (nzPageIndexChange)="onPageIndexChange($event)"
+    (nzPageSizeChange)="onPageSizeChange($event)">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Author</th>
+            <th>Language</th>
+            <th>Created time</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let submissionSnippet of table.data" (click)="onSubmissionSnippetClicked(submissionSnippet)">
+            <td>{{ submissionSnippet.iD }}</td>
+            <td>{{ submissionSnippet.author.displayName }}</td>
+            <td>{{ submissionSnippet.language | language | async}}</td>
+            <td>{{ submissionSnippet.createdTime | date:'d/M/yyyy, h:mm a':'d/M/yyyy, h:mm a' }}</td>
+            <td>
+                <nz-tag [nzColor]="submissionSnippet | submissionStatusColor">
+                    {{ submissionSnippet | submissionStatus }}
+                </nz-tag>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

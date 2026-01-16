@@ -1,0 +1,97 @@
+<div *ngIf="problem" class="content">
+    <p *ngIf="canUpdateProblem()">
+        <nz-button-group>
+            <button nz-button (click)="onCreateTestCaseClicked()">
+                <span nz-icon nzType="plus" nzTheme="outline"></span>
+                Create test case
+            </button>
+            <button nz-button (click)="onUploadZippedTestCasesClicked()">
+                <span nz-icon nzType="upload" nzTheme="outline"></span>
+                Upload zipped test cases
+            </button>
+        </nz-button-group>
+    </p>
+    <nz-table #table [nzData]="testCaseList" [nzPageIndex]="pageIndex" [nzPageSize]="pageSize"
+        [nzTotal]="totalTestCaseCount" [nzLoading]="loading" [nzShowSizeChanger]="true" [nzFrontPagination]="false"
+        [nzPageSizeOptions]="[10, 20, 50, 100]" (nzPageIndexChange)="onPageIndexChange($event)"
+        (nzPageSizeChange)="onPageSizeChange($event)">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Input</th>
+                <th>Output</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let testCase of table.data; index as i">
+                <td>{{ paginationService.getPageOffset(pageIndex, pageSize) + i + 1 }}</td>
+                <td>
+                    @if (testCase.isHidden && sessionAccount?.role === 'contestant') {
+                    Hidden
+                    } @else {
+                    <code nz-typography [nzContent]="testCase.input | ellipsis:100 " nz-tooltip="Click to copy"
+                        (click)="onTestCaseInputClicked(i, testCase)">
+                    </code>
+                    }
+                </td>
+                <td>
+                    @if (testCase.isHidden && sessionAccount?.role === 'contestant') {
+                    Hidden
+                    } @else {
+                    <code nz-typography [nzContent]="testCase.output | ellipsis:100" nz-tooltip="Click to copy"
+                        (click)="onTestCaseOutputClicked(i, testCase)">
+                    </code>
+                    }
+                </td>
+                <td>
+                    <nz-button-group>
+                        <button *ngIf="!(sessionAccount?.role === 'contestant' && testCase.isHidden)" nz-button
+                            [disabled]="testCase.loading" nz-tooltip="Expand"
+                            (click)="onTestCaseExpandClicked(i, testCase)">
+                            <span nz-icon nzType="expand-alt" nzTheme="outline"></span>
+                        </button>
+                        <button *ngIf="canUpdateProblem()" nz-button [disabled]="testCase.loading" nz-tooltip="Edit"
+                            (click)="onTestCaseEditClicked(i, testCase)">
+                            <span nz-icon nzType="edit" nzTheme="outline"></span>
+                        </button>
+                        <button *ngIf="canUpdateProblem()" nz-button [disabled]="testCase.loading" nz-tooltip="Delete"
+                            nzDanger (click)="onTestCaseDeleteClicked(testCase)">
+                            <span nz-icon nzType="delete" nzTheme="outline"></span>
+                        </button>
+                    </nz-button-group>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+    <ng-template #expandTestCaseModal>
+        <app-test-case-view-modal [input]="expandTestCaseModalInput" [output]="expandTestCaseModalOutput">
+        </app-test-case-view-modal>
+    </ng-template>
+    <ng-template #expandTestCaseModalFooter>
+        <button nz-button (click)="onExpandTestCaseModalCopyInputClicked()">
+            <span nz-icon nzType="copy" nzTheme="outline"></span> Copy input
+        </button>
+        <button nz-button (click)="onExpandTestCaseModalCopyOutputClicked()">
+            <span nz-icon nzType="copy" nzTheme="outline"></span> Copy output
+        </button>
+    </ng-template>
+    <ng-template #editTestCaseModal>
+        <app-test-case-editor-modal [(input)]="editTestCaseModalInput" [(output)]="editTestCaseModalOutput"
+            [(isHidden)]="editModalTestCaseIsHidden">
+        </app-test-case-editor-modal>
+    </ng-template>
+    <ng-template #uploadTestCaseModal>
+        <nz-upload nzType="drag" nzAction="/#" [nzBeforeUpload]="onLoadFile">
+            <div class="upload-hint">
+                <p class="ant-upload-drag-icon"><span nz-icon nzType="inbox"></span></p>
+                <p class="ant-upload-text">Click or drag file to this area to upload</p>
+                <p class="ant-upload-hint">
+                    <code>.zip</code> files are supported. Each pair of <code>input.txt</code> and
+                    <code>output.txt</code> in the same directory - including subdirectories - will be used as one test
+                    case.
+                </p>
+            </div>
+        </nz-upload>
+    </ng-template>
+</div>

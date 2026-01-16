@@ -1,0 +1,29 @@
+<nz-layout class="app-layout">
+  <nz-sider class="menu-sidebar" nzCollapsible nzWidth="256px" [nzCollapsedWidth]="windowWidth < 992? 0 : 64"
+    nzBreakpoint="xl" [(nzCollapsed)]="collapsed" [nzTrigger]="null">
+    <div nz-space nzAlign="center" nzDirection="horizontal" class="sidebar-logo">
+      <ng-container nzSpaceItem>
+        <a routerLink="/">
+          <img src="/assets/android-icon-144x144.png" alt="logo">
+          <h1 *ngIf="!collapsed">Cato</h1>
+        </a>
+      </ng-container>
+    </div>
+    <app-side-menu [collapsed]="collapsed"></app-side-menu>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <div class="app-header">
+        <span class="header-trigger" (click)="collapsed = !collapsed">
+          <span class="trigger" nz-icon [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"></span>
+        </span>
+        <nz-page-header class="header-title" [nzTitle]="pageTitle"></nz-page-header>
+      </div>
+    </nz-header>
+    <nz-content>
+      <div>
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout>

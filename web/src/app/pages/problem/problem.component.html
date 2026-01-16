@@ -1,0 +1,27 @@
+<div nz-row>
+    <div nz-col [nzLg]="canCreateSubmission()? 12 : 24" [nzMd]="24" class="problem">
+        <nz-tabset #problemTabSet>
+            <nz-tab nzTitle="Description">
+                <app-description *ngIf="problem" [problem]="problem">
+                </app-description>
+            </nz-tab>
+
+            <nz-tab nzTitle="Test cases">
+                <ng-template nz-tab>
+                    <app-test-case-list *ngIf="problem" [problem]="problem"></app-test-case-list>
+                </ng-template>
+            </nz-tab>
+
+            <nz-tab nzTitle="Submissions" #submissionTab>
+                <ng-template nz-tab>
+                    <app-submission-list *ngIf="problem" [problemUUID]="problem.uUID"></app-submission-list>
+                </ng-template>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+
+    <div *ngIf="canCreateSubmission()" nz-col [nzLg]="12" [nzMd]="24">
+        <app-code-editor [(content)]="submissionContent" [(language)]="submissionLanguage"
+            (submitClicked)="onSubmitClicked()"></app-code-editor>
+    </div>
+</div>
